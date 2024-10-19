@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scary Countdown</title>
+  <style>
+    body {
+      background-color: black;
+      color: red;
+      font-family: 'Creepster', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #countdown {
+      font-size: 6rem;
+      text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+    }
+
+    .message {
+      font-size: 2rem;
+      text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+      }
+      50% {
+        text-shadow: 0 0 20px red, 0 0 40px red, 0 0 60px red;
+      }
+    }
+
+    #countdown {
+      animation: pulse 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div id="countdown"></div>
+    <div class="message">Days Until It's All Over.</div>
+  </div>
+
+  <script>
+    const countdownElement = document.getElementById('countdown');
+    const targetDate = new Date('October 25, 2024 00:00:00').getTime();
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+      if (distance < 0) {
+        clearInterval(interval);
+        countdownElement.innerHTML = "If You're Reading This, I'm Already Dead.";
+      }
+    };
+
+    const interval = setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
