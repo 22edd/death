@@ -1,75 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Death Counter</title>
-  <style>
+<meta charset="UTF-8">
+<title>Vaxy Interface</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    :root {
+        --bg: #05050a;
+        --accent: #7f3dff;
+        --glass: rgba(255,255,255,0.05);
+        --text: #e5e5ff;
+    }
+
     body {
-      background-color: black;
-      color: red;
-      font-family: 'Creepster', cursive;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-      overflow: hidden;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
     }
 
-    #countdown {
-      font-size: 6rem;
-      text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+    /* Stars background */
+    canvas {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: transparent;
     }
 
-    .message {
-      font-size: 2rem;
-      text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+    /* Center container */
+    .wrapper {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
-      }
-      50% {
-        text-shadow: 0 0 20px red, 0 0 40px red, 0 0 60px red;
-      }
+    /* Reveal box */
+    .panel {
+        width: 80%;
+        max-width: 700px;
+        padding: 30px;
+        background: var(--glass);
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        box-shadow: 0 0 40px rgba(127, 61, 255, 0.3);
+        opacity: 0;
+        transform: translateY(40px);
+        animation: reveal 1.4s ease forwards;
     }
 
-    #countdown {
-      animation: pulse 1.5s infinite;
+    @keyframes reveal {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-  </style>
+
+    h1 {
+        font-size: 2.4rem;
+        font-weight: 700;
+        text-shadow: 0 0 20px var(--accent);
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 1.1rem;
+        opacity: 0.8;
+        margin-bottom: 25px;
+    }
+
+    .btn {
+        display: inline-block;
+        margin: 10px;
+        padding: 14px 30px;
+        border-radius: 12px;
+        border: 1px solid var(--accent);
+        color: var(--text);
+        font-size: 1rem;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: 0.25s;
+        text-decoration: none;
+    }
+
+    .btn:hover {
+        background: var(--accent);
+        transform: scale(1.05);
+    }
+
+    .glow {
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+        from { text-shadow: 0 0 5px var(--accent); }
+        to   { text-shadow: 0 0 25px var(--accent); }
+    }
+
+</style>
 </head>
+
 <body>
-  <div>
-    <div id="countdown"></div>
-    <div class="message">Days Until It's All Over.</div>
-  </div>
 
-  <script>
-    const countdownElement = document.getElementById('countdown');
-    const targetDate = new Date('March 14, 2025 00:00:00').getTime();
+<canvas id="stars"></canvas>
 
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
+<div class="wrapper">
+    <div class="panel">
+        <h1 class="glow">Welcome, Seabass</h1>
+        <p>This interface adapts to you, your creativity, and everything you build under Vaxy.</p>
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        <a class="btn" onclick="surprise()">Access Module</a>
+        <a class="btn" onclick="randomEffect()">Pulse Engine</a>
+    </div>
+</div>
 
-      countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+<script>
+/* --- Animated Star Field Background --- */
+const c = document.getElementById("stars");
+const ctx = c.getContext("2d");
+let w, h;
 
-      if (distance < 0) {
-        clearInterval(interval);
-        countdownElement.innerHTML = "If You're Reading This, I'm Already Dead.";
-      }
-    };
+function resize() {
+    w = c.width = window.innerWidth;
+    h = c.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
 
-    const interval = setInterval(updateCountdown, 1000);
-  </script>
+let stars = [];
+for (let i = 0; i < 200; i++) {
+    stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        s: Math.random() * 2,
+        v: Math.random() * 0.4 + 0.2
+    });
+}
+
+function draw() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#ffffff20";
+    stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.s, 0, 2 * Math.PI);
+        ctx.fill();
+        star.x += star.v;
+        if (star.x > w) star.x = 0;
+    });
+    requestAnimationFrame(draw);
+}
+draw();
+
+/* --- Button Surprises (Based on your interests, secretly) --- */
+function surprise() {
+    const messages = [
+        "Initializing Gorilla Tag OSINT Engine...",
+        "Decrypting Vaxy Internal API...",
+        "Scanning Roblox Presence Matrix...",
+        "Launching Vaxy Command Core...",
+        "Activating HyperOSINT Protocol...",
+    ];
+    alert(messages[Math.floor(Math.random() * messages.length)]);
+}
+
+function randomEffect() {
+    document.body.style.transition = "0.5s";
+    document.body.style.filter = "hue-rotate(" + Math.random()*360 + "deg)";
+}
+</script>
+
 </body>
 </html>
